@@ -32,14 +32,14 @@ public class Server extends Thread implements Runnable, ServerRMI {
 
 		} catch (Exception e) {
 
-		System.err.println("ERRO: Verifique se a aplicação está ativa, ou então se a porta está disponível.\n");
+		System.err.println("ERRO: Verifique se a aplicacao esta ativa, ou entao se a porta esta disponivel.\n");
 		e.printStackTrace();
 	}
 	}
 
 	public String apresentacao(String nome) throws RemoteException {
 		apresentaConsole("Cliente " + nome + " se conectou.");
-		return "Conexão Ok.";
+		return "Conexao Ok.";
 	}
 
 	private void apresentaConsole(String string) {
@@ -51,16 +51,6 @@ public class Server extends Thread implements Runnable, ServerRMI {
 	}
 
 	public void sair(String meunome) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void enviarMensagem(String meunome, String destinatario, String mensagemPrivada) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void enviarMensagemPublica(String meunome, String mensagem) {
 		// TODO Auto-generated method stub
 		
 	}
