@@ -24,8 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import client.Client;
-import server.Server;
+import common.Client;
+import common.IServer;
 
 public class ConxClient extends JFrame {
 
@@ -186,7 +186,7 @@ public class ConxClient extends JFrame {
 	private SimpleDateFormat datefor = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
 
 
-	private Server servidor;
+	private IServer servidor;
 
 
 	private Client cliente;
@@ -257,7 +257,7 @@ public class ConxClient extends JFrame {
 		try {
 			registry = LocateRegistry.getRegistry(host, intPorta);
 
-			servidor = (Server) registry.lookup(Server.SERVICO);
+			servidor = (IServer) registry.lookup(IServer.SERVICO);
 			setCliente((Client) UnicastRemoteObject.exportObject((Remote) this, 0));
 
 			buttonDesconectar.setEnabled(true);
