@@ -1,31 +1,86 @@
 package client;
-// teste teste teste
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import java.io.Serializable;
 
-import common.ServerRMI;
+public class Client implements Serializable {
 
-public class Client {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4462502260206522050L;
+	
+	private long idCli;
+	private String nomeCli;
+	private String ipCli;
+	private int portaCli;
 
-	public static void main(String[] args) {
-
-		Registry registry;
-		try {
-			registry = LocateRegistry.getRegistry("192.168.103.174", 1818);
-			ServerRMI servico = (ServerRMI) registry.lookup(ServerRMI.SERVICO);
-
-			BuscaSimples ts = new BuscaSimples();
-			System.out.println("Vou mandar para o servidor");
-
-			String retorno = servico.executar(ts);
-
-			System.out.println("Retorno do servidor: " + retorno);
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
+	public long getIdCli() {
+		return idCli;
 	}
+
+	public void setIdCli(long idCli) {
+		this.idCli = idCli;
+	}
+
+	public String getNomeCli() {
+		return nomeCli;
+	}
+
+	public void setNomeCli(String nomeCli) {
+		this.nomeCli = nomeCli;
+	}
+
+	public String getIpCli() {
+		return ipCli;
+	}
+
+	public void setIpCli(String ipCli) {
+		this.ipCli = ipCli;
+	}
+
+	public int getPortaCli() {
+		return portaCli;
+	}
+
+	public void setPortaCli(int portaCli) {
+		this.portaCli = portaCli;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (idCli ^ (idCli >>> 32));
+		result = prime * result + ((ipCli == null) ? 0 : ipCli.hashCode());
+		result = prime * result + ((nomeCli == null) ? 0 : nomeCli.hashCode());
+		result = prime * result + portaCli;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Client other = (Client) obj;
+		if (idCli != other.idCli)
+			return false;
+		if (ipCli == null) {
+			if (other.ipCli != null)
+				return false;
+		} else if (!ipCli.equals(other.ipCli))
+			return false;
+		if (nomeCli == null) {
+			if (other.nomeCli != null)
+				return false;
+		} else if (!nomeCli.equals(other.nomeCli))
+			return false;
+		if (portaCli != other.portaCli)
+			return false;
+		return true;
+	}
+
 }
