@@ -16,13 +16,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import client.Client;
 import common.Arquivo;
+import common.MD5;
 import common.TiposDeFiltro;
 import search.Listas;
 
 public class ImpServer extends UnicastRemoteObject implements IServer {
 
 	private int PORTA_TCPIP;
-	Map<Client, List<Arquivo>> publicarArq = new HashMap<>();
+	Map<Client, List<Arquivo>> padraoMap = new HashMap<>();
 
 	public ImpServer() throws RemoteException {
 		super();
@@ -46,8 +47,8 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 	}
 
 	public void publicarListaArquivos(final Client c, final List<Arquivo> lista) throws RemoteException {
-		if (publicarArq.containsKey(c)) {
-			publicarArq.entrySet().forEach(map -> {
+		if (padraoMap.containsKey(c)) {
+			padraoMap.entrySet().forEach(map -> {
 				if (map.getKey().equals(c)) {
 					map.setValue(lista);
 				}
@@ -99,6 +100,18 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 		Path path = Paths.get(arq.getPath());
 		try {
 			byte[] dados = Files.readAllBytes(path);
+			if (dados == null) {
+				System.out.println("veio nulo");
+			} else {
+
+				String bytesBaixado = MD5.getMD5Checksum(arq.getPath());
+				if (arq.getMd5().equals(bytesBaixado)) {
+
+					// escreva(new File("cópia_de_" + arq.getNome()), dados);
+				} else {
+					// escreva(new File("cópia_de_" + arq.getNome()), dados);
+				}
+			}
 			return dados;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -106,8 +119,13 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 	}
 
 	public void desconectar(Client c) throws RemoteException {
-		// TODO Auto-generated method stub
 
+		if (padraoMap.containsKey(c)) {
+			padraoMap.remove(c);
+
+		} else {
+
+		}
 	}
 
 }

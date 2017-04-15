@@ -1,11 +1,15 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -14,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -23,16 +27,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
-import br.univel.comum.Arquivo;
-import br.univel.comum.Cliente;
-import br.univel.comum.ImplServidor;
-import br.univel.comum.ResultadoModel;
 import client.Client;
+import client.ConexClient;
 import server.IServer;
 import server.ImpServer;
 import common.Arquivo;
+import common.TiposDeFiltro;
+import javax.swing.JTable;
 
 public class Conexao extends JFrame {
 
@@ -51,6 +54,8 @@ public class Conexao extends JFrame {
 	private JScrollPane scrollPane;
 	private JButton btnDownload;
 	private JTextField textField_4;
+	private JScrollPane scrollPane_1;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -73,8 +78,9 @@ public class Conexao extends JFrame {
 	 */
 	public Conexao() throws RemoteException {
 
-		final Client cliente = new Client();
-		final IServer servidor = new ImpServer();
+		Client cliente = new Client();
+		IServer servidor = new ImpServer();
+		Arquivo arq = new Arquivo();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 590, 478);
@@ -107,36 +113,10 @@ public class Conexao extends JFrame {
 		final JButton btnIniciaServidor = new JButton("Inicia Servidor");
 		btnIniciaServidor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				iniciarServico();
-
-			}
-
-			private void iniciarServico() {
-
 				try {
-
-					IServer servidor = (IServer) UnicastRemoteObject.exportObject(new ImpServer(), 0);
-					Registry registry = LocateRegistry.createRegistry(1818);
-					registry.rebind(IServer.NOME_SERVICO, servidor);
-
-					System.out.println("Servico iniciado.");
-
-					ipConex.setEnabled(false);
-					porta.setEnabled(false);
-					btnIniciaServidor.setEnabled(false);
-					btnConectar.setEnabled(false);
-					btnDesconectar.setEnabled(false);
-					btnDownload.setEnabled(false);
-					btnLimpar.setEnabled(false);
-					btnPesquisar.setEnabled(false);
-					pchave.setEnabled(false);
-					selecao.setEnabled(false);
-					nomeUsu.setEnabled(false);
-					ipConex.setEnabled(false);
-					porta.setEnabled(false);
-
-				} catch (RemoteException e) {
-					e.printStackTrace();
+					servidor.registrarCliente(cliente);
+				} catch (RemoteException e3) {
+					e3.printStackTrace();
 				}
 
 			}
@@ -206,8 +186,13 @@ public class Conexao extends JFrame {
 		btnConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					servidor.registrarCliente(cliente);
-				} catch (RemoteException e1) {
+					ConexClient cli = new ConexClient();
+					cliente.setIpCli(ipConex.getText());
+					cliente.setPortaCli(Integer.parseInt(porta.getText()));
+					cliente.setNomeCli(nomeUsu.getText());
+
+					cli.conectar(cliente);
+				} catch (RemoteException | NotBoundException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -246,6 +231,7 @@ public class Conexao extends JFrame {
 		contentPane.add(lblPesquisarPor, gbc_lblPesquisarPor);
 
 		selecao = new JComboBox();
+		selecao.setModel(new DefaultComboBoxModel(TiposDeFiltro.values()));
 		GridBagConstraints gbc_selecao = new GridBagConstraints();
 		gbc_selecao.insets = new Insets(0, 0, 5, 5);
 		gbc_selecao.fill = GridBagConstraints.HORIZONTAL;
@@ -263,6 +249,13 @@ public class Conexao extends JFrame {
 		pchave.setColumns(10);
 
 		btnPesquisar = new JButton("Pesquisar");
+		btnPesquisar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selecao.getSelectedItem();
+				// servidor.procurarArquivo(tf_Pesquisar.getText(), TipoFiltro,
+				// cb_Filtro.getToolTipText());
+			}
+		});
 		GridBagConstraints gbc_btnPesquisar = new GridBagConstraints();
 		gbc_btnPesquisar.insets = new Insets(0, 0, 5, 5);
 		gbc_btnPesquisar.gridx = 3;
@@ -270,6 +263,12 @@ public class Conexao extends JFrame {
 		contentPane.add(btnPesquisar, gbc_btnPesquisar);
 
 		btnLimpar = new JButton("Limpar");
+		btnLimpar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pchave.setText("");
+
+			}
+		});
 		GridBagConstraints gbc_btnLimpar = new GridBagConstraints();
 		gbc_btnLimpar.insets = new Insets(0, 0, 5, 0);
 		gbc_btnLimpar.gridx = 4;
@@ -285,13 +284,34 @@ public class Conexao extends JFrame {
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 3;
 		contentPane.add(scrollPane, gbc_scrollPane);
-
-		btnDownload = new JButton("Download");
-		GridBagConstraints gbc_btnDownload = new GridBagConstraints();
-		gbc_btnDownload.insets = new Insets(0, 0, 5, 5);
-		gbc_btnDownload.gridx = 3;
-		gbc_btnDownload.gridy = 5;
-		contentPane.add(btnDownload, gbc_btnDownload);
+		
+		scrollPane_1 = new JScrollPane();
+		scrollPane.setViewportView(scrollPane_1);
+		
+		table = new JTable();
+		table.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Cliente", "New column", "Arquivo"
+				}
+			) {
+				boolean[] columnEditables = new boolean[] {
+					false, true, false
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+			
+		scrollPane_1.setViewportView(table);
+		
+				btnDownload = new JButton("Download");
+				GridBagConstraints gbc_btnDownload = new GridBagConstraints();
+				gbc_btnDownload.insets = new Insets(0, 0, 5, 0);
+				gbc_btnDownload.gridx = 4;
+				gbc_btnDownload.gridy = 5;
+				contentPane.add(btnDownload, gbc_btnDownload);
 
 		textField_4 = new JTextField();
 		GridBagConstraints gbc_textField_4 = new GridBagConstraints();
@@ -302,13 +322,55 @@ public class Conexao extends JFrame {
 		contentPane.add(textField_4, gbc_textField_4);
 		textField_4.setColumns(10);
 	}
-	protected void carregar() {
+
+	public void TelaMostraArquivos() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
 		
+		JButton btnCarregar = new JButton("Carregar");
+		btnCarregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				carregar();
+			}
+		});
+		contentPane.add(btnCarregar, BorderLayout.NORTH);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		contentPane.add(scrollPane, BorderLayout.CENTER);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() >= 2) {
+					mostraSelecionadoTabela();
+				}
+			}
+		});
+	}
+
+	protected void mostraSelecionadoTabela() {
+		int linhaSelecionada = table.getSelectedRow();
+		if (linhaSelecionada < 0) {
+		} else {
+			int row = table.convertRowIndexToModel(linhaSelecionada);
+			Arquivo arq = ((ResultadoModel)table.getModel()).getMeuItem(row);
+			
+		}
+	}
+
+	protected void carregar() {
 		Map<Client, List<Arquivo>> dados = gerarDados();
 		
 		ResultadoModel modelo = new ResultadoModel(dados);
 		
-		table.setModel((TableModel) modelo);
+		table.setModel(modelo);
 		
 	}
 
@@ -316,24 +378,24 @@ public class Conexao extends JFrame {
 
 		Map<Client, List<Arquivo>> dados = new HashMap<>();
 		
-		for (int c = 1; c <= 100; c++) {
+		for (int cliente = 1; cliente <= 100; cliente++) {
 			
 			Client cli = new Client();
-			cli.setIdCli(c);
-			cli.setNomeCli("Cliente " + c);
+			cli.setIdCli(cliente);
+			cli.setNomeCli("Cliente " + cliente);
 			
 			List<Arquivo> lista = new ArrayList<>();
 			for (int a = 1; a <= 100; a++) {
 				Arquivo arq = new Arquivo();
 				arq.setId(1);
-				arq.setNome("Arquivo " + a);
+				arq.setNomeArq("Arquivo " + a);
 				
 				lista.add(arq);
 			}
 			
 			dados.put(cli, lista);
 		}
-		
 		return dados;
 	}
+	
 }
