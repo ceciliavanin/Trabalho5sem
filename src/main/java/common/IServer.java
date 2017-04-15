@@ -2,6 +2,9 @@ package common;
 
 import java.util.List;
 import java.util.Map;
+
+import client.Client;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

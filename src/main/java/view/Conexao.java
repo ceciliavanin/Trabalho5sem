@@ -29,7 +29,7 @@ import br.univel.comum.Arquivo;
 import br.univel.comum.Cliente;
 import br.univel.comum.ImplServidor;
 import br.univel.comum.ResultadoModel;
-import common.Client;
+import client.Client;
 import common.IServer;
 import common.ImpServer;
 import common.Arquivo;
