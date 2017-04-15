@@ -30,8 +30,8 @@ import br.univel.comum.Cliente;
 import br.univel.comum.ImplServidor;
 import br.univel.comum.ResultadoModel;
 import client.Client;
-import common.IServer;
-import common.ImpServer;
+import server.IServer;
+import server.ImpServer;
 import common.Arquivo;
 
 public class Conexao extends JFrame {

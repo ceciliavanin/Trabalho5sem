@@ -1,9 +1,11 @@
-package common;
+package server;
 
 import java.util.List;
 import java.util.Map;
 
 import client.Client;
+import common.Arquivo;
+import common.TiposDeFiltro;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
