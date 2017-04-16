@@ -1,4 +1,4 @@
-package search;
+package common;
 
 public class Listas {
 	

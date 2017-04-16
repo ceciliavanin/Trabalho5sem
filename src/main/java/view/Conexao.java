@@ -34,6 +34,7 @@ import client.ConexClient;
 import server.IServer;
 import server.ImpServer;
 import common.Arquivo;
+import common.ResultadoModel;
 import common.TiposDeFiltro;
 import javax.swing.JTable;
 

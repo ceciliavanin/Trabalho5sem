@@ -16,9 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import client.Client;
 import common.Arquivo;
+import common.Listas;
 import common.MD5;
 import common.TiposDeFiltro;
-import search.Listas;
 
 public class ImpServer extends UnicastRemoteObject implements IServer {
 
@@ -31,7 +31,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 
 	public void registrarCliente(Client c) throws RemoteException {
 		//
-		// ImpServer servidor = new ImpServer();
+		 ImpServer servidor = new ImpServer();
 
 		IServer servico;
 
