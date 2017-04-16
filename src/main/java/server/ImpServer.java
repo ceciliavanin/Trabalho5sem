@@ -31,7 +31,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 
 	public void registrarCliente(Client c) throws RemoteException {
 		//
-		 ImpServer servidor = new ImpServer();
+		ImpServer servidor = new ImpServer();
 
 		IServer servico;
 
