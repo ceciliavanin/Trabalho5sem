@@ -40,7 +40,7 @@ public interface IServer extends Remote {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Map<Client, List<Arquivo>> procurarArquivo(String query, TiposDeFiltro tipoFiltro, String filtro)
+	public Map<Client, List<Arquivo>> procurarArquivo(String query, TiposDeFiltro tipoFiltro)
 			throws RemoteException;
 
 	/**

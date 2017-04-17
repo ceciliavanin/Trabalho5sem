@@ -1,5 +1,6 @@
 package server;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
+
 import client.Client;
 import common.Arquivo;
 import common.Listas;
@@ -58,7 +62,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 		}
 	}
 
-	public Map<Client, List<Arquivo>> procurarArquivo(String query, TiposDeFiltro tipoFiltro, String filtro)
+	public Map<Client, List<Arquivo>> procurarArquivo(String query, TiposDeFiltro tipoFiltro)
 			throws RemoteException {
 		Map<Client, List<Arquivo>> resultadoMap = new HashMap<>();
 		Map<Client, List<Arquivo>> padraoMap = new HashMap<>();
@@ -72,19 +76,19 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 						list.add(v);
 					}
 				} else if (TiposDeFiltro.EXTENSAO.equals(tipoFiltro)) {
-					if (v.getExtArq().toLowerCase().contains(filtro.toLowerCase())) {
+					if (v.getExtArq().toLowerCase().contains(query.toLowerCase())) {
 						if (v.getNomeArq().toLowerCase().contains(query.toLowerCase())) {
 							list.add(v);
 						}
 					}
 				} else if (TiposDeFiltro.TAMANHO_MAX.equals(tipoFiltro)) {
-					if (v.getTamanhoArq() >= Integer.valueOf(filtro)) {
+					if (v.getTamanhoArq() >= Integer.valueOf(query)) {
 						if (v.getNomeArq().toLowerCase().contains(query.toLowerCase())) {
 							list.add(v);
 						}
 					}
 				} else if (TiposDeFiltro.TAMANHO_MAX.equals(tipoFiltro)) {
-					if (v.getTamanhoArq() <= Integer.valueOf(filtro)) {
+					if (v.getTamanhoArq() <= Integer.valueOf(query)) {
 						if (v.getNomeArq().toLowerCase().contains(query.toLowerCase())) {
 							list.add(v);
 						}
@@ -97,19 +101,27 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 	}
 
 	public byte[] baixarArquivo(Client cli, Arquivo arq) throws RemoteException {
+
 		Path path = Paths.get(arq.getPath());
+		Arquivo arquivo = new Arquivo();
+		
 		try {
 			byte[] dados = Files.readAllBytes(path);
 			if (dados == null) {
-				System.out.println("veio nulo");
+				System.out.println("Veio nulo");
 			} else {
-
 				String bytesBaixado = MD5.getMD5Checksum(arq.getPath());
 				if (arq.getMd5().equals(bytesBaixado)) {
-
-					// escreva(new File("cópia_de_" + arq.getNome()), dados);
+					FileOutputStream fos = new FileOutputStream(arquivo.getNomeArq());
+					fos.write(dados);
+					fos.close();
+					
+					JOptionPane.showMessageDialog(null, "Arquivo baixado com sucesso!");
+					
 				} else {
-					// escreva(new File("cópia_de_" + arq.getNome()), dados);
+					
+					JOptionPane.showMessageDialog(null, "Arquivo corrompido!");
+					
 				}
 			}
 			return dados;
@@ -129,3 +141,4 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 	}
 
 }
+

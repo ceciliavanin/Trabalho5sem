@@ -11,18 +11,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -57,7 +57,8 @@ public class Conexao extends JFrame {
 	private JTextField textField_4;
 	private JScrollPane scrollPane_1;
 	private JTable table;
-
+	private Boolean conect = false;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -104,122 +105,142 @@ public class Conexao extends JFrame {
 		gbc_panel.gridy = 0;
 		contentPane.add(panel, gbc_panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{111, 121, 40, 89, 111, 106, 0};
-		gbl_panel.rowHeights = new int[]{23, 20, 20, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWidths = new int[] { 111, 121, 40, 89, 111, 106, 0 };
+		gbl_panel.rowHeights = new int[] { 23, 20, 20, 0, 0 };
+		gbl_panel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
-						
-								final JButton btnIniciaServidor = new JButton("Inicia Servidor");
-								btnIniciaServidor.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent e) {
-										try {
-											servidor.registrarCliente(cliente);
-										} catch (RemoteException e3) {
-											e3.printStackTrace();
-										}
 
-									}
-								});
-								GridBagConstraints gbc_btnIniciaServidor = new GridBagConstraints();
-								gbc_btnIniciaServidor.fill = GridBagConstraints.HORIZONTAL;
-								gbc_btnIniciaServidor.insets = new Insets(0, 0, 5, 5);
-								gbc_btnIniciaServidor.gridwidth = 6;
-								gbc_btnIniciaServidor.gridx = 0;
-								gbc_btnIniciaServidor.gridy = 0;
-								panel.add(btnIniciaServidor, gbc_btnIniciaServidor);
-						
-								JLabel lblNome = new JLabel("Nome:");
-								GridBagConstraints gbc_lblNome = new GridBagConstraints();
-								gbc_lblNome.anchor = GridBagConstraints.EAST;
-								gbc_lblNome.insets = new Insets(0, 0, 5, 5);
-								gbc_lblNome.gridx = 0;
-								gbc_lblNome.gridy = 1;
-								panel.add(lblNome, gbc_lblNome);
+		final JButton btnIniciaServidor = new JButton("Inicia Servidor");
+		btnIniciaServidor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					servidor.registrarCliente(cliente);
+					porta.setEnabled(false);
+					ipConex.setEnabled(false);
+					selecao.setEnabled(false);
+					pchave.setEnabled(false);
+					nomeUsu.setEnabled(false);
+					btnConectar.setEnabled(false);
+					btnLimpar.setEnabled(false);
+					btnPesquisar.setEnabled(false);
+					btnDownload.setEnabled(false);
+				} catch (RemoteException e3) {
+					e3.printStackTrace();
+				}
+
+			}
+		});
+		GridBagConstraints gbc_btnIniciaServidor = new GridBagConstraints();
+		gbc_btnIniciaServidor.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnIniciaServidor.insets = new Insets(0, 0, 5, 5);
+		gbc_btnIniciaServidor.gridwidth = 6;
+		gbc_btnIniciaServidor.gridx = 0;
+		gbc_btnIniciaServidor.gridy = 0;
+		panel.add(btnIniciaServidor, gbc_btnIniciaServidor);
+
+		JLabel lblNome = new JLabel("Nome:");
+		GridBagConstraints gbc_lblNome = new GridBagConstraints();
+		gbc_lblNome.anchor = GridBagConstraints.EAST;
+		gbc_lblNome.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNome.gridx = 0;
+		gbc_lblNome.gridy = 1;
+		panel.add(lblNome, gbc_lblNome);
+
+		nomeUsu = new JTextField();
+		GridBagConstraints gbc_nomeUsu = new GridBagConstraints();
+		gbc_nomeUsu.fill = GridBagConstraints.HORIZONTAL;
+		gbc_nomeUsu.insets = new Insets(0, 0, 5, 0);
+		gbc_nomeUsu.gridwidth = 5;
+		gbc_nomeUsu.gridx = 1;
+		gbc_nomeUsu.gridy = 1;
+		panel.add(nomeUsu, gbc_nomeUsu);
+		nomeUsu.setColumns(10);
+
+		JLabel lblIp = new JLabel("IP:");
+		GridBagConstraints gbc_lblIp = new GridBagConstraints();
+		gbc_lblIp.anchor = GridBagConstraints.EAST;
+		gbc_lblIp.insets = new Insets(0, 0, 5, 5);
+		gbc_lblIp.gridx = 0;
+		gbc_lblIp.gridy = 2;
+		panel.add(lblIp, gbc_lblIp);
+
+		ipConex = new JTextField();
+		GridBagConstraints gbc_ipConex = new GridBagConstraints();
+		gbc_ipConex.fill = GridBagConstraints.HORIZONTAL;
+		gbc_ipConex.insets = new Insets(0, 0, 5, 5);
+		gbc_ipConex.gridx = 1;
+		gbc_ipConex.gridy = 2;
+		panel.add(ipConex, gbc_ipConex);
+		ipConex.setColumns(10);
+
+		JLabel lblPorta = new JLabel("Porta:");
+		GridBagConstraints gbc_lblPorta = new GridBagConstraints();
+		gbc_lblPorta.anchor = GridBagConstraints.EAST;
+		gbc_lblPorta.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPorta.gridx = 2;
+		gbc_lblPorta.gridy = 2;
+		panel.add(lblPorta, gbc_lblPorta);
+
+		porta = new JTextField();
+		GridBagConstraints gbc_porta = new GridBagConstraints();
+		gbc_porta.fill = GridBagConstraints.HORIZONTAL;
+		gbc_porta.insets = new Insets(0, 0, 5, 5);
+		gbc_porta.gridx = 3;
+		gbc_porta.gridy = 2;
+		panel.add(porta, gbc_porta);
+		porta.setColumns(10);
+
+		btnConectar = new JButton("Conectar");
+		btnConectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnIniciaServidor.setEnabled(false);
 				
-						nomeUsu = new JTextField();
-						GridBagConstraints gbc_nomeUsu = new GridBagConstraints();
-						gbc_nomeUsu.fill = GridBagConstraints.HORIZONTAL;
-						gbc_nomeUsu.insets = new Insets(0, 0, 5, 0);
-						gbc_nomeUsu.gridwidth = 5;
-						gbc_nomeUsu.gridx = 1;
-						gbc_nomeUsu.gridy = 1;
-						panel.add(nomeUsu, gbc_nomeUsu);
-						nomeUsu.setColumns(10);
-		
-				JLabel lblIp = new JLabel("IP:");
-				GridBagConstraints gbc_lblIp = new GridBagConstraints();
-				gbc_lblIp.anchor = GridBagConstraints.EAST;
-				gbc_lblIp.insets = new Insets(0, 0, 5, 5);
-				gbc_lblIp.gridx = 0;
-				gbc_lblIp.gridy = 2;
-				panel.add(lblIp, gbc_lblIp);
-				
-						ipConex = new JTextField();
-						GridBagConstraints gbc_ipConex = new GridBagConstraints();
-						gbc_ipConex.fill = GridBagConstraints.HORIZONTAL;
-						gbc_ipConex.insets = new Insets(0, 0, 5, 5);
-						gbc_ipConex.gridx = 1;
-						gbc_ipConex.gridy = 2;
-						panel.add(ipConex, gbc_ipConex);
-						ipConex.setColumns(10);
-		
-				JLabel lblPorta = new JLabel("Porta:");
-				GridBagConstraints gbc_lblPorta = new GridBagConstraints();
-				gbc_lblPorta.anchor = GridBagConstraints.EAST;
-				gbc_lblPorta.insets = new Insets(0, 0, 5, 5);
-				gbc_lblPorta.gridx = 2;
-				gbc_lblPorta.gridy = 2;
-				panel.add(lblPorta, gbc_lblPorta);
-		
-				porta = new JTextField();
-				GridBagConstraints gbc_porta = new GridBagConstraints();
-				gbc_porta.fill = GridBagConstraints.HORIZONTAL;
-				gbc_porta.insets = new Insets(0, 0, 5, 5);
-				gbc_porta.gridx = 3;
-				gbc_porta.gridy = 2;
-				panel.add(porta, gbc_porta);
-				porta.setColumns(10);
-		
-				btnConectar = new JButton("Conectar");
-				btnConectar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						try {
-							ConexClient cli = new ConexClient();
-							cliente.setIpCli(ipConex.getText());
-							cliente.setPortaCli(Integer.parseInt(porta.getText()));
-							cliente.setNomeCli(nomeUsu.getText());
+				try {
+					ConexClient cli = new ConexClient();
+					cliente.setIpCli(ipConex.getText());
+					cliente.setPortaCli(Integer.parseInt(porta.getText()));
+					cliente.setNomeCli(nomeUsu.getText());
+					
+					cli.conectar(cliente);
+				} catch (RemoteException | NotBoundException e1) {
+					e1.printStackTrace();
+				}
+			}
 
-							cli.conectar(cliente);
-						} catch (RemoteException | NotBoundException e1) {
-							e1.printStackTrace();
-						}
-					}
+		});
+		GridBagConstraints gbc_btnConectar = new GridBagConstraints();
+		gbc_btnConectar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnConectar.insets = new Insets(0, 0, 5, 5);
+		gbc_btnConectar.gridx = 4;
+		gbc_btnConectar.gridy = 2;
+		panel.add(btnConectar, gbc_btnConectar);
 
-				});
-				GridBagConstraints gbc_btnConectar = new GridBagConstraints();
-				gbc_btnConectar.fill = GridBagConstraints.HORIZONTAL;
-				gbc_btnConectar.insets = new Insets(0, 0, 5, 5);
-				gbc_btnConectar.gridx = 4;
-				gbc_btnConectar.gridy = 2;
-				panel.add(btnConectar, gbc_btnConectar);
-		
-				btnDesconectar = new JButton("Desconectar");
-				btnDesconectar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						try {
-							servidor.desconectar(cliente);
-						} catch (RemoteException e2) {
-							e2.printStackTrace();
-						}
-					}
-				});
-				GridBagConstraints gbc_btnDesconectar = new GridBagConstraints();
-				gbc_btnDesconectar.fill = GridBagConstraints.HORIZONTAL;
-				gbc_btnDesconectar.insets = new Insets(0, 0, 5, 0);
-				gbc_btnDesconectar.gridx = 5;
-				gbc_btnDesconectar.gridy = 2;
-				panel.add(btnDesconectar, gbc_btnDesconectar);
+		btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					servidor.desconectar(cliente);
+					porta.setEnabled(true);
+					ipConex.setEnabled(true);
+					selecao.setEnabled(true);
+					pchave.setEnabled(true);
+					nomeUsu.setEnabled(true);
+					btnConectar.setEnabled(true);
+					btnLimpar.setEnabled(true);
+					btnPesquisar.setEnabled(true);
+					btnDownload.setEnabled(true);
+				} catch (RemoteException e2) {
+					e2.printStackTrace();
+				}
+			}
+		});
+		GridBagConstraints gbc_btnDesconectar = new GridBagConstraints();
+		gbc_btnDesconectar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnDesconectar.insets = new Insets(0, 0, 5, 0);
+		gbc_btnDesconectar.gridx = 5;
+		gbc_btnDesconectar.gridy = 2;
+		panel.add(btnDesconectar, gbc_btnDesconectar);
 
 		lblPesquisarPor = new JLabel("Pesquisar por:");
 		GridBagConstraints gbc_lblPesquisarPor = new GridBagConstraints();
@@ -247,33 +268,38 @@ public class Conexao extends JFrame {
 		gbc_pchave.gridy = 3;
 		panel.add(pchave, gbc_pchave);
 		pchave.setColumns(10);
-						
-								btnPesquisar = new JButton("Pesquisar");
-								GridBagConstraints gbc_btnPesquisar = new GridBagConstraints();
-								gbc_btnPesquisar.fill = GridBagConstraints.HORIZONTAL;
-								gbc_btnPesquisar.insets = new Insets(0, 0, 0, 5);
-								gbc_btnPesquisar.gridx = 4;
-								gbc_btnPesquisar.gridy = 3;
-								panel.add(btnPesquisar, gbc_btnPesquisar);
-								btnPesquisar.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent e) {
-//										selecao.getSelectedItem();
 
-									}
-								});
-				
-						btnLimpar = new JButton("Limpar");
-						GridBagConstraints gbc_btnLimpar = new GridBagConstraints();
-						gbc_btnLimpar.fill = GridBagConstraints.HORIZONTAL;
-						gbc_btnLimpar.gridx = 5;
-						gbc_btnLimpar.gridy = 3;
-						panel.add(btnLimpar, gbc_btnLimpar);
-				btnLimpar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						pchave.setText("");
+		btnPesquisar = new JButton("Pesquisar");
+		GridBagConstraints gbc_btnPesquisar = new GridBagConstraints();
+		gbc_btnPesquisar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnPesquisar.insets = new Insets(0, 0, 0, 5);
+		gbc_btnPesquisar.gridx = 4;
+		gbc_btnPesquisar.gridy = 3;
+		panel.add(btnPesquisar, gbc_btnPesquisar);
+		btnPesquisar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					servidor.procurarArquivo(pchave.getText(), (TiposDeFiltro) selecao.getSelectedItem());
+				} catch (RemoteException e1) {
+					JOptionPane.showMessageDialog(null, "Algo de errado não está certo!");
+					e1.printStackTrace();
+				}
+			}
+		});
 
-					}
-				});
+		btnLimpar = new JButton("Limpar");
+		GridBagConstraints gbc_btnLimpar = new GridBagConstraints();
+		gbc_btnLimpar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnLimpar.gridx = 5;
+		gbc_btnLimpar.gridy = 3;
+		panel.add(btnLimpar, gbc_btnLimpar);
+		btnLimpar.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				pchave.setText("");
+
+			}
+		});
 
 		scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -284,35 +310,41 @@ public class Conexao extends JFrame {
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		contentPane.add(scrollPane, gbc_scrollPane);
-		
+
 		scrollPane_1 = new JScrollPane();
 		scrollPane.setViewportView(scrollPane_1);
-		
+
 		table = new JTable();
-		table.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-					"Cliente", "New column", "Arquivo"
-				}
-			) {
-				boolean[] columnEditables = new boolean[] {
-					false, true, false
-				};
-				public boolean isCellEditable(int row, int column) {
-					return columnEditables[column];
-				}
-			});
-			
+		table.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Cliente", "Arquivo" }) {
+			boolean[] columnEditables = new boolean[] { true, true };
+
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+
 		scrollPane_1.setViewportView(table);
-		
-				btnDownload = new JButton("Download");
-				GridBagConstraints gbc_btnDownload = new GridBagConstraints();
-				gbc_btnDownload.fill = GridBagConstraints.HORIZONTAL;
-				gbc_btnDownload.insets = new Insets(0, 0, 5, 0);
-				gbc_btnDownload.gridx = 3;
-				gbc_btnDownload.gridy = 3;
-				contentPane.add(btnDownload, gbc_btnDownload);
+
+		btnDownload = new JButton("Download");
+		btnDownload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Client cli = new Client();
+				Arquivo arq = new Arquivo();
+				try {
+					servidor.baixarArquivo(cli, arq);
+				} catch (RemoteException e1) {
+					JOptionPane.showMessageDialog(null, "Erro!");
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		GridBagConstraints gbc_btnDownload = new GridBagConstraints();
+		gbc_btnDownload.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnDownload.insets = new Insets(0, 0, 5, 0);
+		gbc_btnDownload.gridx = 3;
+		gbc_btnDownload.gridy = 3;
+		contentPane.add(btnDownload, gbc_btnDownload);
 
 		textField_4 = new JTextField();
 		GridBagConstraints gbc_textField_4 = new GridBagConstraints();
@@ -332,7 +364,7 @@ public class Conexao extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		
+
 		JButton btnCarregar = new JButton("Carregar");
 		btnCarregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -340,14 +372,14 @@ public class Conexao extends JFrame {
 			}
 		});
 		contentPane.add(btnCarregar, BorderLayout.NORTH);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane, BorderLayout.CENTER);
-		
+
 		table = new JTable();
 		carregar();
 		scrollPane.setViewportView(table);
-		
+
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -363,42 +395,62 @@ public class Conexao extends JFrame {
 		if (linhaSelecionada < 0) {
 		} else {
 			int row = table.convertRowIndexToModel(linhaSelecionada);
-			Arquivo arq = ((ResultadoModel)table.getModel()).getMeuItem(row);
-			
+			Arquivo arq = ((ResultadoModel) table.getModel()).getMeuItem(row);
+
 		}
 	}
 
 	protected void carregar() {
 		Map<Client, List<Arquivo>> dados = gerarDados();
-		
+
 		ResultadoModel modelo = new ResultadoModel(dados);
-		
+
 		table.setModel(modelo);
-		
+
 	}
 
 	private Map<Client, List<Arquivo>> gerarDados() {
 
 		Map<Client, List<Arquivo>> dados = new HashMap<>();
-		
+
 		for (int cliente = 1; cliente <= 100; cliente++) {
-			
+
 			Client cli = new Client();
 			cli.setIdCli(cliente);
 			cli.setNomeCli("Cliente " + cliente);
-			
+
 			List<Arquivo> lista = new ArrayList<>();
 			for (int a = 1; a <= 100; a++) {
 				Arquivo arq = new Arquivo();
 				arq.setId(1);
 				arq.setNomeArq("Arquivo " + a);
-				
+
 				lista.add(arq);
 			}
-			
+
 			dados.put(cli, lista);
 		}
 		return dados;
 	}
-	
+
+	private void publicaDadosTabela(Map<Client, List<Arquivo>> dados) {
+		DefaultTableModel dtm = new DefaultTableModel(new Object[] { "Host", "Ip", "Port", "Arq", "Size" }, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		if (!dados.isEmpty()) {
+			for (Entry<Client, List<Arquivo>> item : dados.entrySet()) {
+				for (int i = 0; i < item.getValue().size(); i++) {
+					dtm.addRow(new Object[] { item.getKey(), item.getKey().getIpCli(), item.getKey().getPortaCli(),
+							item.getValue().get(i).getNomeArq(), item.getValue().get(i).getTamanhoArq() });
+				}
+			}
+		}
+
+		table.setModel(dtm);
+	}
+
+
 }
