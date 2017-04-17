@@ -1,5 +1,6 @@
 package server;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,6 +9,7 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.RemoteObject;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +26,9 @@ import common.Listas;
 import common.MD5;
 import common.TiposDeFiltro;
 
-public class ImpServer extends UnicastRemoteObject implements IServer {
+public class ImpServer extends RemoteObject implements IServer {
 
+	private static final String PASTA_DOWNLOAD = "C:/share";
 	private int PORTA_TCPIP;
 	Map<Client, List<Arquivo>> padraoMap = new HashMap<>();
 
@@ -67,6 +70,11 @@ public class ImpServer extends UnicastRemoteObject implements IServer {
 		Map<Client, List<Arquivo>> resultadoMap = new HashMap<>();
 		Map<Client, List<Arquivo>> padraoMap = new HashMap<>();
 
+		File file = new File(PASTA_DOWNLOAD);
+		
+		File[] listFiles = file.listFiles();
+		
+		
 		padraoMap.forEach((k, value) -> {
 			List<Arquivo> list = new ArrayList<>();
 

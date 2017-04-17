@@ -80,9 +80,9 @@ public class Conexao extends JFrame {
 	 */
 	public Conexao() throws RemoteException {
 
-		Client cliente = new Client();
-		IServer servidor = new ImpServer();
-		Arquivo arq = new Arquivo();
+		final Client cliente = new Client();
+		final IServer servidor = new ImpServer();
+		final Arquivo arq = new Arquivo();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 610, 488);
