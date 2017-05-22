@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Client implements Serializable {
 
 	/**
-	 * 
+	 * teste
 	 */
 	private static final long serialVersionUID = -4462502260206522050L;
 	
